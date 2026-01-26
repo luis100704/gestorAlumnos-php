@@ -1,6 +1,38 @@
 $(document).ready(function () {
 
     cargarAlumnos();
+
+    $('#formAlumno').on('submit', function (e) {
+        e.preventDefault();
+      
+        const datos = {
+          nombre: $('#nombre').val(),
+          email: $('#email').val(),
+          curso: $('#curso').val()
+        };
+      
+        $.ajax({
+          url: '../api/createAlumno.php',
+          type: 'POST',
+          data: datos,
+          dataType: 'json',
+          success: function (respuesta) {
+      
+            if (!respuesta.success) {
+              alert(respuesta.message);
+              return;
+            }
+      
+            $('#formAlumno')[0].reset();
+      
+            cargarAlumnos();
+          },
+          error: function () {
+            alert('Error al enviar el formulario');
+          }
+        });
+      });
+      
   
     function cargarAlumnos() {
       $.ajax({
