@@ -1,12 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Gestor de Alumnos</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
+
 <body>
 
+    <div class="container mt-5"></div>
+
     <h1>Gestor de alumnos</h1>
-    
+
+    <form id="formAlumno" class="mb-4">
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="nombre">Nombre</label>
+                <input type="text" class="form-control" id="nombre" placeholder="Nombre">
+            </div>
+
+            <div class="form-group col-md-4">
+                <label for="email">Email</label>
+                <input type="email" class="form-control" id="email" placeholder="Email">
+            </div>
+
+            <div class="form-group col-md-4">
+                <label for="curso">Curso</label>
+                <input type="text" class="form-control" id="curso" placeholder="Curso">
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            Guardar alumno
+        </button>
+    </form>
+
+    <table class="table table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th>Nombre</th>
+                <th>Email</th>
+                <th>Curso</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+    </table>
+
+    </div>
+
 </body>
+
 </html>
