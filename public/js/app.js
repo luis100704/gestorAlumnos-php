@@ -4,17 +4,67 @@ $(document).ready(function () {
 
     $('#formAlumno').on('submit', function (e) {
         e.preventDefault();
-      
+
         const datos = {
-          nombre: $('#nombre').val(),
-          email: $('#email').val(),
-          curso: $('#curso').val()
+            alumno_id: $('#alumno_id').val(),
+            nombre: $('#nombre').val(),
+            email: $('#email').val(),
+            curso: $('#curso').val()
         };
+
+        const alumnoId = $('#alumno_id').val();
+        const url = alumnoId
+            ? '../api/updateAlumno.php'
+            : '../api/createAlumno.php';
+
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: datos,
+            dataType: 'json',
+            success: function (respuesta) {
+                console.log('RESPUESTA PHP:', respuesta);
+
+                if (!respuesta.success) {
+                    alert(respuesta.message);
+                    return;
+                }
+
+                $('#formAlumno')[0].reset();
+
+                cargarAlumnos();
+                $('#alumno_id').val('');
+                $('#btnGuardar').text('Guardar alumno');
+
+            },
+            error: function () {
+                alert('Error al enviar el formulario');
+            }
+        });
+    });
+
+    $(document).on('click', '.btn-editar', function () {
+
+        $('#alumno_id').val($(this).data('id'));
+        $('#nombre').val($(this).data('nombre'));
+        $('#email').val($(this).data('email'));
+        $('#curso').val($(this).data('curso'));
+
+        $('#btnGuardar').text('Actualizar alumno');
+    });
+
+    $(document).on('click', '.btn-eliminar', function () {
+
+        const id = $(this).data('id');
+      
+        if (!confirm('¿Seguro que quieres eliminar este alumno?')) {
+          return;
+        }
       
         $.ajax({
-          url: '../api/createAlumno.php',
+          url: '../api/deleteAlumno.php',
           type: 'POST',
-          data: datos,
+          data: { id: id },
           dataType: 'json',
           success: function (respuesta) {
       
@@ -23,52 +73,62 @@ $(document).ready(function () {
               return;
             }
       
-            $('#formAlumno')[0].reset();
-      
             cargarAlumnos();
           },
           error: function () {
-            alert('Error al enviar el formulario');
+            alert('Error al eliminar alumno');
           }
         });
       });
-      
-  
+
+
     function cargarAlumnos() {
-      $.ajax({
-        url: '../api/getAlumnos.php',
-        type: 'GET',
-        dataType: 'json',
-        success: function (respuesta) {
-  
-          if (!respuesta.success) {
-            alert('Error al cargar alumnos');
-            return;
-          }
-  
-          let filas = '';
-  
-          respuesta.data.forEach(function (alumno) {
-            filas += `
+        $.ajax({
+            url: '../api/getAlumnos.php',
+            type: 'GET',
+            dataType: 'json',
+            success: function (respuesta) {
+
+                if (!respuesta.success) {
+                    alert('Error al cargar alumnos');
+                    return;
+                }
+
+                let filas = '';
+
+                respuesta.data.forEach(function (alumno) {
+                    filas += `
               <tr>
                 <td>${alumno.nombre}</td>
                 <td>${alumno.email}</td>
                 <td>${alumno.curso}</td>
                 <td>
-                  <button class="btn btn-sm btn-warning">Editar</button>
-                  <button class="btn btn-sm btn-danger">Eliminar</button>
+                  <button 
+                  class="btn btn-sm btn-warning btn-editar"
+                   data-id="${alumno.id}"
+                   data-nombre="${alumno.nombre}"
+                   data-email="${alumno.email}"
+                   data-curso="${alumno.curso}"
+                   >Editar
+                   </button>
+                  <button 
+                  class="btn btn-sm btn-danger btn-eliminar"
+                  data-id="${alumno.id}"
+                  >Eliminar
+                  </button>
                 </td>
               </tr>
             `;
-          });
-  
-          $('#tablaAlumnos').html(filas);
-        },
-        error: function () {
-          alert('Error en la petición AJAX');
-        }
-      });
+
+            
+                });
+
+                $('#tablaAlumnos').html(filas);
+            },
+            error: function () {
+                alert('Error en la petición AJAX');
+            }
+        });
     }
-  
-  });
-  
+
+});
