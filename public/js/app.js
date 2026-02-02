@@ -1,5 +1,24 @@
 $(document).ready(function () {
 
+    let timeoutMensaje = null;
+
+    function mostrarMensaje(texto, tipo = 'success') {
+
+        if (timeoutMensaje) {
+            clearTimeout(timeoutMensaje);
+        }
+
+        $('#mensaje').html(`
+          <div class="alert alert-${tipo}">
+            ${texto}
+          </div>
+        `);
+      
+        timeoutMensaje = setTimeout(() => {
+            $('#mensaje').html('');
+        }, 3000);
+      }
+      
     cargarAlumnos();
 
     $('#formAlumno').on('submit', function (e) {
@@ -23,12 +42,13 @@ $(document).ready(function () {
             data: datos,
             dataType: 'json',
             success: function (respuesta) {
-                console.log('RESPUESTA PHP:', respuesta);
 
                 if (!respuesta.success) {
-                    alert(respuesta.message);
+                    mostrarMensaje(respuesta.message, 'danger');
                     return;
                 }
+
+                mostrarMensaje(respuesta.message, 'success');
 
                 $('#formAlumno')[0].reset();
 
@@ -38,7 +58,7 @@ $(document).ready(function () {
 
             },
             error: function () {
-                alert('Error al enviar el formulario');
+                mostrarMensaje('Error al enviar el formulario', 'danger');
             }
         });
     });
@@ -69,14 +89,15 @@ $(document).ready(function () {
           success: function (respuesta) {
       
             if (!respuesta.success) {
-              alert(respuesta.message);
+              mostrarMensaje(respuesta.message, 'danger');
               return;
             }
       
+            mostrarMensaje(respuesta.message, 'success');
             cargarAlumnos();
           },
           error: function () {
-            alert('Error al eliminar alumno');
+            mostrarMensaje('Error al eliminar alumno', 'danger');
           }
         });
       });
@@ -90,7 +111,7 @@ $(document).ready(function () {
             success: function (respuesta) {
 
                 if (!respuesta.success) {
-                    alert('Error al cargar alumnos');
+                    mostrarMensaje('Error al cargar alumnos');
                     return;
                 }
 
@@ -126,7 +147,7 @@ $(document).ready(function () {
                 $('#tablaAlumnos').html(filas);
             },
             error: function () {
-                alert('Error en la petición AJAX');
+                mostrarMensaje('Error en la petición AJAX', 'danger');
             }
         });
     }
